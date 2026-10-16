@@ -1,0 +1,43 @@
+{
+  "name": "@sandsoftwaresolutions/slug",
+  "version": "0.1.0",
+  "description": "URL slugs from titles: accents, special letters, locale-aware ampersand, safe fallback and unique slugs.",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./src/index.d.ts",
+      "import": "./src/index.js"
+    }
+  },
+  "files": [
+    "src",
+    "README.md",
+    "LICENSE"
+  ],
+  "sideEffects": false,
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "test": "node --test",
+    "pack:check": "npm pack --dry-run"
+  },
+  "keywords": [
+    "slug",
+    "url",
+    "seo",
+    "transliterate"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SandSoftwareSolutions/ss-slug.git"
+  },
+  "bugs": {
+    "url": "https://github.com/SandSoftwareSolutions/ss-slug/issues"
+  },
+  "homepage": "https://github.com/SandSoftwareSolutions/ss-slug#readme",
+  "publishConfig": {
+    "access": "public"
+  }
+}
