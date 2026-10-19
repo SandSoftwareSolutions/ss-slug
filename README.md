@@ -29,7 +29,7 @@ isSlug("hello-world");                                     // true
 - **Accents and special letters:** `é → e`, `ü → u`, `ñ → n`, `ß → ss`, `æ → ae`, `ø → o`, `ł → l`, `đ → d`, `þ → th`. A capital stays natural: `Ærø → Aero`.
 - **`&`** becomes `en` (`locale: "nl"`), `and` (`en`), `und` (`de`), `et` (`fr`), `y` (`es`) or `e` (`it`).
 - **Nothing usable left** (a title with only emoji or non-Latin letters, say): you get `fallback` if you gave one, otherwise `n-` and a short hash of the text, so different titles still get different slugs instead of all being `""`.
-- **`maxLength`** cuts at a word boundary where it reasonably can, never leaves a trailing separator, and `uniqueSlug` keeps its `-2` inside the limit.
+- **`maxLength`** cuts at a word boundary where it reasonably can, never leaves a trailing separator, and `uniqueSlug` keeps its `-2` inside the limit (it throws a `RangeError` if `maxLength` is too small to fit the number).
 - Options: `separator` (up to 3 URL-safe characters), `lowercase`, `keep` (extra characters to keep, such as `._`).
 - Non-Latin scripts (Chinese, Arabic, Cyrillic...) are not transliterated; for those pass a `fallback` or an id.
 - `transliterate(text)` is the accent removal on its own.

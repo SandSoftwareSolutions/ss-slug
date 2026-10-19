@@ -84,3 +84,22 @@ test("isSlug", () => {
   assert.equal(isSlug("a_b", { separator: "_" }), true);
   assert.throws(() => slugify(5), TypeError);
 });
+
+test("ŉ is written as n, not dropped", () => {
+  assert.equal(transliterate("ŉ"), "n");
+  assert.equal(slugify("ŉ x"), "n-x");
+});
+
+test("isSlug does not backtrack exponentially (empty separator, long input)", () => {
+  const start = Date.now();
+  assert.equal(isSlug("a".repeat(40) + "!", { separator: "" }), false);
+  assert.equal(isSlug("abc123", { separator: "" }), true);
+  assert.equal(isSlug("a-b-", { separator: "-" }), false);
+  assert.equal(isSlug("a--b"), false);
+  assert.ok(Date.now() - start < 500);
+});
+
+test("uniqueSlug with a maxLength too small for the number throws instead of giving '-2'", async () => {
+  await assert.rejects(uniqueSlug("abc", (s) => s === "ab", { maxLength: 2 }), RangeError);
+  assert.equal(await uniqueSlug("abcdef", (s) => s === "abcd", { maxLength: 4 }), "ab-2");
+});

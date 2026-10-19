@@ -3,7 +3,7 @@ import { createHash } from "node:crypto";
 // Letters that do not decompose into a base letter plus an accent, and what they are written as in a URL.
 const SPECIAL = {
   ß: "ss", ẞ: "SS", æ: "ae", Æ: "AE", œ: "oe", Œ: "OE", ø: "o", Ø: "O", đ: "d", Đ: "D", ð: "d", Ð: "D", þ: "th", Þ: "TH", ł: "l", Ł: "L",
-  ħ: "h", Ħ: "H", ı: "i", ŋ: "ng", Ŋ: "NG", ĸ: "k", ŀ: "l", Ŀ: "L", ſ: "s", ʼn: "n"
+  ħ: "h", Ħ: "H", ı: "i", ŋ: "ng", Ŋ: "NG", ĸ: "k", ŀ: "l", Ŀ: "L", ſ: "s", ŉ: "n"
 };
 const WORD_FOR_AMPERSAND = { nl: "en", en: "and", de: "und", fr: "et", es: "y", it: "e" };
 
@@ -48,7 +48,7 @@ const escapeRe = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
 /**
  * A slug that is not taken yet: `uniqueSlug("My post", (s) => exists(s))` gives `my-post`, then `my-post-2`, `my-post-3`...
- * `isTaken` may be async. The number is added inside `maxLength` if you set one.
+ * `isTaken` may be async. The number is added inside `maxLength` if you set one (a `RangeError` if it cannot fit).
  */
 export async function uniqueSlug(text, isTaken, options = {}) {
   const base = slugify(text, options);
@@ -57,6 +57,7 @@ export async function uniqueSlug(text, isTaken, options = {}) {
   for (let n = 2; n < 10_000; n++) {
     const suffix = `${separator}${n}`;
     const trimmed = options.maxLength && base.length + suffix.length > options.maxLength ? base.slice(0, options.maxLength - suffix.length).replace(new RegExp(`${separator ? escapeRe(separator) : "(?!)"}+$`), "") : base;
+    if (trimmed === "" && base !== "") throw new RangeError("slug: maxLength is too small to add a number to the slug");
     const candidate = `${trimmed}${suffix}`;
     if (!(await isTaken(candidate))) return candidate;
   }
@@ -66,6 +67,6 @@ export async function uniqueSlug(text, isTaken, options = {}) {
 /** Whether text is already a valid slug of this package (lowercase letters, digits and single separators). */
 export function isSlug(text, { separator = "-" } = {}) {
   if (typeof text !== "string" || text === "") return false;
-  const sep = escapeRe(separator);
-  return new RegExp(`^[a-z0-9]+(?:${sep}[a-z0-9]+)*$`).test(text);
+  // split instead of a nested-quantifier regex: with separator "" the regex form backtracks exponentially
+  return (separator === "" ? [text] : text.split(separator)).every((part) => /^[a-z0-9]+$/.test(part));
 }
