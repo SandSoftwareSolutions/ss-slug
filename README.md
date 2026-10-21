@@ -10,6 +10,8 @@ Make URLs from titles: `"Crème brûlée & Café"` becomes `creme-brulee-en-cafe
 npm install @sandsoftwaresolutions/slug
 ```
 
+Works with `import` and `require()`, and ships TypeScript types for both.
+
 ## Usage
 
 ```js
